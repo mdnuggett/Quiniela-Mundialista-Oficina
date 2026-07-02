@@ -23,7 +23,7 @@
         .admin-panel { background: #fdf2f4; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5d6dd; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
         .contador { font-weight: bold; color: #8a1538; }
         .flag-spacing { font-size: 1.2rem; vertical-align: middle; margin: 0 4px; }
-        .guardado-txt { color: #27ae60; font-size: 0.9rem; font-weight: bold; display: none; }
+        .guardado-txt { color: #27ae60; font-size: 0.9rem; font-weight: bold; display: none; margin-left: 10px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -52,40 +52,40 @@
         <tbody>
             <tr>
                 <td><b>#1</b></td>
-                <td><input type="text" class="input-team" id="p1-el" value="Argentina" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p1-el" placeholder="Local 1" oninput="cambioDetectado()"></td>
                 <td><input type="number" id="p1-gl" value="0" min="0" oninput="cambioDetectado()"></td>
                 <td><b>VS</b></td>
                 <td><input type="number" id="p1-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p1-ev" value="Francia" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p1-ev" placeholder="Visitante 1" oninput="cambioDetectado()"></td>
             </tr>
             <tr>
                 <td><b>#2</b></td>
-                <td><input type="text" class="input-team" id="p2-el" value="Brasil" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p2-el" placeholder="Local 2" oninput="cambioDetectado()"></td>
                 <td><input type="number" id="p2-gl" value="0" min="0" oninput="cambioDetectado()"></td>
                 <td><b>VS</b></td>
                 <td><input type="number" id="p2-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p2-ev" value="Alemania" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p2-ev" placeholder="Visitante 2" oninput="cambioDetectado()"></td>
             </tr>
             <tr>
                 <td><b>#3</b></td>
-                <td><input type="text" class="input-team" id="p3-el" value="España" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p3-el" placeholder="Local 3" oninput="cambioDetectado()"></td>
                 <td><input type="number" id="p3-gl" value="0" min="0" oninput="cambioDetectado()"></td>
                 <td><b>VS</b></td>
                 <td><input type="number" id="p3-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p3-ev" value="Inglaterra" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p3-ev" placeholder="Visitante 3" oninput="cambioDetectado()"></td>
             </tr>
             <tr>
                 <td><b>#4</b></td>
-                <td><input type="text" class="input-team" id="p4-el" value="México" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p4-el" placeholder="Local 4" oninput="cambioDetectado()"></td>
                 <td><input type="number" id="p4-gl" value="0" min="0" oninput="cambioDetectado()"></td>
                 <td><b>VS</b></td>
                 <td><input type="number" id="p4-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p4-ev" value="Japón" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p4-ev" placeholder="Visitante 4" oninput="cambioDetectado()"></td>
             </tr>
         </tbody>
     </table>
-    <div style="text-align: right; margin-top: 5px;">
-        <button class="btn-secondary" onclick="guardarPartidos Reales()">💾 Guardar Partidos Reales</button>
+    <div style="text-align: right; margin-top: 10px; display: flex; justify-content: flex-end; align-items: center;">
+        <button class="btn-secondary" onclick="guardarPartidosReales()">💾 Guardar Partidos Reales</button>
         <span id="p-guardado" class="guardado-txt">¡Partidos Guardados!</span>
     </div>
 
@@ -109,10 +109,10 @@
             <thead>
                 <tr>
                     <th>Participante</th>
-                    <th id="header-p1">Argentina vs Francia</th>
-                    <th id="header-p2">Brasil vs Alemania</th>
-                    <th id="header-p3">España vs Inglaterra</th>
-                    <th id="header-p4">México vs Japón</th>
+                    <th id="header-p1">Partido 1</th>
+                    <th id="header-p2">Partido 2</th>
+                    <th id="header-p3">Partido 3</th>
+                    <th id="header-p4">Partido 4</th>
                 </tr>
             </thead>
             <tbody id="cuerpo-quiniela">
@@ -120,12 +120,12 @@
         </table>
     </div>
 
-    <div style="text-align: center; margin-top: 15px; gap: 10px; display: flex; justify-content: center;">
+    <div style="text-align: center; margin-top: 15px; gap: 10px; display: flex; justify-content: center; align-items: center;">
         <button class="btn-secondary" style="background-color: #2980b9;" onclick="guardarPredicciones()">💾 Guardar Mis Predicciones</button>
         <button class="btn-primary" style="margin-top:0;" onclick="calcularResultados()">📊 Calcular Ganador y Puntos</button>
     </div>
     <div style="text-align: center; margin-top: 5px;">
-        <span id="pred-guardado" class="guardado-txt">¡Predicciones de todos guardadas en la base de datos!</span>
+        <span id="pred-guardado" class="guardado-txt">¡Predicciones guardadas en la base de datos!</span>
     </div>
 
     <div class="ranking-box" id="seccion-resultados" style="display: none;">
@@ -136,8 +136,7 @@
 
 <script>
     // ==========================================
-    // TUNEL DE CONEXIÓN CON TU BASE DE DATOS FIREBASE
-    // REEMPLAZA ESTO CON TUS DATOS DE CONFIGURACIÓN
+    // CONFIGURACIÓN DE FIREBASE (¡Pon tus datos aquí!)
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyCvWb4CB-Aq0jpEtIsdHIhi4lmAdukRrbg",
@@ -185,23 +184,25 @@
     }
 
     // ==========================================
-    // LEER DATOS AUTOMÁTICAMENTE AL ENTRAR AL LINK
+    // ESCUCHAR Y CARGAR DATOS EN TIEMPO REAL
     // ==========================================
     db.ref('/').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
+            // 1. Cargar partidos guardados en la BD (Evita que se reinicien)
             if (data.partidos) {
-                // Cargar partidos guardados
                 for(let i=1; i<=4; i++) {
                     if(data.partidos[`p${i}`]) {
-                        document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el;
-                        document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl;
-                        document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv;
-                        document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev;
+                        // Solo actualiza los inputs si el usuario no está escribiendo activamente en ellos
+                        if (document.activeElement !== document.getElementById(`p${i}-el`)) document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el || "";
+                        if (document.activeElement !== document.getElementById(`p${i}-gl`)) document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl ?? 0;
+                        if (document.activeElement !== document.getElementById(`p${i}-gv`)) document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv ?? 0;
+                        if (document.activeElement !== document.getElementById(`p${i}-ev`)) document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev || "";
                     }
                 }
             }
             
+            // 2. Cargar participantes
             if (data.participantes) {
                 datosGlobales.participantes = data.participantes;
                 reconstruirTablaParticipantes(data.participantes);
@@ -212,6 +213,18 @@
 
     function reconstruirTablaParticipantes(participantes) {
         const cuerpoTabla = document.getElementById('cuerpo-quiniela');
+        
+        // Guardamos temporalmente lo que los usuarios tengan escrito en pantalla para no borrarlo al actualizar
+        const valoresTemporales = {};
+        Object.keys(participantes).forEach(idKey => {
+            for(let i=1; i<=4; i++) {
+                const inputL = document.getElementById(`${idKey}-p${i}-l`);
+                const inputV = document.getElementById(`${idKey}-p${i}-v`);
+                if(inputL) valoresTemporales[`${idKey}-p${i}-l`] = inputL.value;
+                if(inputV) valoresTemporales[`${idKey}-p${i}-v`] = inputV.value;
+            }
+        });
+
         cuerpoTabla.innerHTML = "";
         let count = 0;
 
@@ -220,12 +233,23 @@
             const p = participantes[idKey];
             const fila = document.createElement('tr');
             fila.id = `fila-${idKey}`;
+            
+            // Si hay un valor guardado en la BD lo usa, si el usuario escribió algo en pantalla usa eso, sino vacío
+            const p1_l_val = valoresTemporales[`${idKey}-p1-l`] !== undefined ? valoresTemporales[`${idKey}-p1-l`] : (p.p1_l ?? '');
+            const p1_v_val = valoresTemporales[`${idKey}-p1-v`] !== undefined ? valoresTemporales[`${idKey}-p1-v`] : (p.p1_v ?? '');
+            const p2_l_val = valoresTemporales[`${idKey}-p2-l`] !== undefined ? valoresTemporales[`${idKey}-p2-l`] : (p.p2_l ?? '');
+            const p2_v_val = valoresTemporales[`${idKey}-p2-v`] !== undefined ? valoresTemporales[`${idKey}-p2-v`] : (p.p2_v ?? '');
+            const p3_l_val = valoresTemporales[`${idKey}-p3-l`] !== undefined ? valoresTemporales[`${idKey}-p3-l`] : (p.p3_l ?? '');
+            const p3_v_val = valoresTemporales[`${idKey}-p3-v`] !== undefined ? valoresTemporales[`${idKey}-p3-v`] : (p.p3_v ?? '');
+            const p4_l_val = valoresTemporales[`${idKey}-p4-l`] !== undefined ? valoresTemporales[`${idKey}-p4-l`] : (p.p4_l ?? '');
+            const p4_v_val = valoresTemporales[`${idKey}-p4-v`] !== undefined ? valoresTemporales[`${idKey}-p4-v`] : (p.p4_v ?? '');
+
             fila.innerHTML = `
                 <td><b class="nombre-lbl">${p.nombre}</b></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p.p1_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p.p1_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p.p2_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p.p2_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p.p3_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p.p3_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p.p4_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p.p4_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p1_l_val}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p1_v_val}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p2_l_val}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p2_v_val}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p3_l_val}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p3_v_val}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p4_l_val}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p4_v_val}" min="0"></td>
             `;
             cuerpoTabla.appendChild(fila);
         });
@@ -241,7 +265,6 @@
         if (nombre === "") return alert("Ingresa un nombre.");
         if (actualCount >= 15) return alert("Límite de 15 alcanzado.");
 
-        // Crear una clave única en Firebase para ese participante
         const nuevoRef = db.ref('participantes').push();
         nuevoRef.set({
             nombre: nombre,
@@ -255,7 +278,7 @@
     }
 
     // ==========================================
-    // ESCRIBIR / GUARDAR EN LA BASE DE DATOS
+    // ACCIONES DE GUARDADO EN BASE DE DATOS
     // ==========================================
     function guardarPartidosReales() {
         const partidos = {};
@@ -275,14 +298,12 @@
     function guardarPredicciones() {
         const updates = {};
         Object.keys(datosGlobales.participantes).forEach(idKey => {
-            updates[`/participantes/${idKey}/p1_l`] = document.getElementById(`${idKey}-p1-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p1-l`).value) : "";
-            updates[`/participantes/${idKey}/p1_v`] = document.getElementById(`${idKey}-p1-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p1-v`).value) : "";
-            updates[`/participantes/${idKey}/p2_l`] = document.getElementById(`${idKey}-p2-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p2-l`).value) : "";
-            updates[`/participantes/${idKey}/p2_v`] = document.getElementById(`${idKey}-p2-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p2-v`).value) : "";
-            updates[`/participantes/${idKey}/p3_l`] = document.getElementById(`${idKey}-p3-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p3-l`).value) : "";
-            updates[`/participantes/${idKey}/p3_v`] = document.getElementById(`${idKey}-p3-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p3-v`).value) : "";
-            updates[`/participantes/${idKey}/p4_l`] = document.getElementById(`${idKey}-p4-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p4-l`).value) : "";
-            updates[`/participantes/${idKey}/p4_v`] = document.getElementById(`${idKey}-p4-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p4-v`).value) : "";
+            for(let i=1; i<=4; i++) {
+                const valL = document.getElementById(`${idKey}-p${i}-l`).value;
+                const valV = document.getElementById(`${idKey}-p${i}-v`).value;
+                updates[`/participantes/${idKey}/p${i}_l`] = valL !== "" ? parseInt(valL) : "";
+                updates[`/participantes/${idKey}/p${i}_v`] = valV !== "" ? parseInt(valV) : "";
+            }
         });
 
         db.ref().update(updates).then(() => {
@@ -297,7 +318,7 @@
     }
 
     // ==========================================
-    // SISTEMA DE CALCULO DE PUNTOS
+    // CÁLCULO DE PUNTOS
     // ==========================================
     function calcularResultados() {
         const reales = [];
@@ -311,24 +332,25 @@
         const listaMiembros = [];
         Object.keys(datosGlobales.participantes).forEach(idKey => {
             const fila = document.getElementById(`fila-${idKey}`);
-            const nombre = fila.querySelector('.nombre-lbl').innerText;
-            
-            let puntos = 0;
-            for (let i = 1; i <= 4; i++) {
-                let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
-                let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
-                let r_l = reales[i-1].l;
-                let r_v = reales[i-1].v;
+            if(fila) {
+                const nombre = fila.querySelector('.nombre-lbl').innerText;
+                let puntos = 0;
+                for (let i = 1; i <= 4; i++) {
+                    let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
+                    let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
+                    let r_l = reales[i-1].l;
+                    let r_v = reales[i-1].v;
 
-                if (!isNaN(mp_l) && !isNaN(mp_v)) {
-                    if (mp_l === r_l && mp_v === r_v) {
-                        puntos += 3; // Marcador exacto
-                    } else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) {
-                        puntos += 1; // Tendencia exacta
+                    if (!isNaN(mp_l) && !isNaN(mp_v)) {
+                        if (mp_l === r_l && mp_v === r_v) {
+                            puntos += 3;
+                        } else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) {
+                            puntos += 1;
+                        }
                     }
                 }
+                listaMiembros.push({ nombre: nombre, puntos: puntos });
             }
-            listaMiembros.push({ nombre: nombre, puntos: puntos });
         });
 
         listaMiembros.sort((a, b) => b.puntos - a.puntos);
