@@ -26,6 +26,7 @@
         .guardado-txt { color: #27ae60; font-size: 0.9rem; font-weight: bold; display: none; margin-left: 10px; }
     </style>
 
+    <!-- IMPORTAR FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
@@ -37,6 +38,7 @@
     
     <hr>
 
+    <!-- CONFIGURACIÓN DE PARTIDOS -->
     <h2>1. Configuración de Partidos y Resultado Real</h2>
     <table id="tabla-partidos">
         <thead>
@@ -52,35 +54,35 @@
         <tbody>
             <tr>
                 <td><b>#1</b></td>
-                <td><input type="text" class="input-team" id="p1-el" placeholder="Local 1" oninput="cambioDetectado()"></td>
-                <td><input type="number" id="p1-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p1-el" placeholder="Local 1"></td>
+                <td><input type="number" id="p1-gl" value="0" min="0"></td>
                 <td><b>VS</b></td>
-                <td><input type="number" id="p1-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p1-ev" placeholder="Visitante 1" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p1-gv" value="0" min="0"></td>
+                <td><input type="text" class="input-team" id="p1-ev" placeholder="Visitante 1"></td>
             </tr>
             <tr>
                 <td><b>#2</b></td>
-                <td><input type="text" class="input-team" id="p2-el" placeholder="Local 2" oninput="cambioDetectado()"></td>
-                <td><input type="number" id="p2-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p2-el" placeholder="Local 2"></td>
+                <td><input type="number" id="p2-gl" value="0" min="0"></td>
                 <td><b>VS</b></td>
-                <td><input type="number" id="p2-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p2-ev" placeholder="Visitante 2" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p2-gv" value="0" min="0"></td>
+                <td><input type="text" class="input-team" id="p2-ev" placeholder="Visitante 2"></td>
             </tr>
             <tr>
                 <td><b>#3</b></td>
-                <td><input type="text" class="input-team" id="p3-el" placeholder="Local 3" oninput="cambioDetectado()"></td>
-                <td><input type="number" id="p3-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p3-el" placeholder="Local 3"></td>
+                <td><input type="number" id="p3-gl" value="0" min="0"></td>
                 <td><b>VS</b></td>
-                <td><input type="number" id="p3-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p3-ev" placeholder="Visitante 3" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p3-gv" value="0" min="0"></td>
+                <td><input type="text" class="input-team" id="p3-ev" placeholder="Visitante 3"></td>
             </tr>
             <tr>
                 <td><b>#4</b></td>
-                <td><input type="text" class="input-team" id="p4-el" placeholder="Local 4" oninput="cambioDetectado()"></td>
-                <td><input type="number" id="p4-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p4-el" placeholder="Local 4"></td>
+                <td><input type="number" id="p4-gl" value="0" min="0"></td>
                 <td><b>VS</b></td>
-                <td><input type="number" id="p4-gv" value="0" min="0" oninput="cambioDetectado()"></td>
-                <td><input type="text" class="input-team" id="p4-ev" placeholder="Visitante 4" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p4-gv" value="0" min="0"></td>
+                <td><input type="text" class="input-team" id="p4-ev" placeholder="Visitante 4"></td>
             </tr>
         </tbody>
     </table>
@@ -91,6 +93,7 @@
 
     <hr style="margin-top: 30px;">
 
+    <!-- PREDICCIONES DE LOS PARTICIPANTES -->
     <h2>2. Predicciones de los Miembros</h2>
     
     <div class="admin-panel">
@@ -116,7 +119,8 @@
                 </tr>
             </thead>
             <tbody id="cuerpo-quiniela">
-                </tbody>
+                <!-- Dinámico -->
+            </tbody>
         </table>
     </div>
 
@@ -128,6 +132,7 @@
         <span id="pred-guardado" class="guardado-txt">¡Predicciones guardadas en la base de datos!</span>
     </div>
 
+    <!-- RESULTADOS Y RANKING -->
     <div class="ranking-box" id="seccion-resultados" style="display: none;">
         <h2>🏆 Tabla de Posiciones </h2>
         <div id="lista-ranking"></div>
@@ -136,20 +141,19 @@
 
 <script>
     // ==========================================
-    // CONFIGURACIÓN DE FIREBASE (¡Pon tus datos aquí!)
+    // CONFIGURACIÓN DE FIREBASE
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyCvWb4CB-Aq0jpEtIsdHIhi4lmAdukRrbg",
-        authDomain: "quiniela-mundialista-88011.firebaseapp.com",
-        databaseURL: "https://quiniela-mundialista-88011-default-rtdb.firebaseio.com",
-        projectId: "quiniela-mundialista-88011",
-        storageBucket: "quiniela-mundialista-88011.firebasestorage.app",
-        messagingSenderId: "990070056201",
-        appId: "1:990070056201:web:6c6d06b78bb737c26e1fd8",
-        measurementId: "G-BRVLVYT95W"
+  	authDomain: "quiniela-mundialista-88011.firebaseapp.com",
+  	databaseURL: "https://quiniela-mundialista-88011-default-rtdb.firebaseio.com",
+  	projectId: "quiniela-mundialista-88011",
+  	storageBucket: "quiniela-mundialista-88011.firebasestorage.app",
+  	messagingSenderId: "990070056201",
+  	appId: "1:990070056201:web:6c6d06b78bb737c26e1fd8",
+ 	measurementId: "G-BRVLVYT95W"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -159,9 +163,7 @@
         "argentina": "🇦🇷", "francia": "🇫🇷", "brasil": "🇧🇷", "alemania": "🇩🇪",
         "españa": "🇪🇸", "espana": "🇪🇸", "inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "mexico": "🇲🇽", 
         "méxico": "🇲🇽", "japon": "🇯🇵", "japón": "🇯🇵", "portugal": "🇵🇹", 
-        "italia": "🇮🇹", "uruguay": "🇺🇾", "estados unidos": "🇺🇸", "usa": "🇺🇸",
-        "canada": "🇨🇦", "canadá": "🇨🇦", "paises bajos": "🇳🇱", "holanda": "🇳🇱",
-        "croacia": "🇭🇷", "marruecos": "🇲🇦"
+        "italia": "🇮🇹", "uruguay": "🇺🇾", "estados unidos": "🇺🇸", "usa": "🇺🇸"
     };
 
     function obtenerBandera(nombrePais) {
@@ -179,30 +181,20 @@
         }
     }
 
-    function cambioDetectado() {
-        actualizarCabeceras();
-    }
-
-    // ==========================================
-    // ESCUCHAR Y CARGAR DATOS EN TIEMPO REAL
-    // ==========================================
-    db.ref('/').on('value', (snapshot) => {
+    // LEER DATOS UNA SOLA VEZ AL CARGAR (Evita bucles de borrado mientras escribes)
+    db.ref('/').once('value').then((snapshot) => {
         const data = snapshot.val();
         if (data) {
-            // 1. Cargar partidos guardados en la BD (Evita que se reinicien)
             if (data.partidos) {
                 for(let i=1; i<=4; i++) {
                     if(data.partidos[`p${i}`]) {
-                        // Solo actualiza los inputs si el usuario no está escribiendo activamente en ellos
-                        if (document.activeElement !== document.getElementById(`p${i}-el`)) document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el || "";
-                        if (document.activeElement !== document.getElementById(`p${i}-gl`)) document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl ?? 0;
-                        if (document.activeElement !== document.getElementById(`p${i}-gv`)) document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv ?? 0;
-                        if (document.activeElement !== document.getElementById(`p${i}-ev`)) document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev || "";
+                        document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el || "";
+                        document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl ?? 0;
+                        document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv ?? 0;
+                        document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev || "";
                     }
                 }
             }
-            
-            // 2. Cargar participantes
             if (data.participantes) {
                 datosGlobales.participantes = data.participantes;
                 reconstruirTablaParticipantes(data.participantes);
@@ -211,20 +203,17 @@
         }
     });
 
+    // Escuchar cambios en los participantes dinámicamente
+    db.ref('participantes').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+            datosGlobales.participantes = data;
+            reconstruirTablaParticipantes(data);
+        }
+    });
+
     function reconstruirTablaParticipantes(participantes) {
         const cuerpoTabla = document.getElementById('cuerpo-quiniela');
-        
-        // Guardamos temporalmente lo que los usuarios tengan escrito en pantalla para no borrarlo al actualizar
-        const valoresTemporales = {};
-        Object.keys(participantes).forEach(idKey => {
-            for(let i=1; i<=4; i++) {
-                const inputL = document.getElementById(`${idKey}-p${i}-l`);
-                const inputV = document.getElementById(`${idKey}-p${i}-v`);
-                if(inputL) valoresTemporales[`${idKey}-p${i}-l`] = inputL.value;
-                if(inputV) valoresTemporales[`${idKey}-p${i}-v`] = inputV.value;
-            }
-        });
-
         cuerpoTabla.innerHTML = "";
         let count = 0;
 
@@ -234,26 +223,15 @@
             const fila = document.createElement('tr');
             fila.id = `fila-${idKey}`;
             
-            // Si hay un valor guardado en la BD lo usa, si el usuario escribió algo en pantalla usa eso, sino vacío
-            const p1_l_val = valoresTemporales[`${idKey}-p1-l`] !== undefined ? valoresTemporales[`${idKey}-p1-l`] : (p.p1_l ?? '');
-            const p1_v_val = valoresTemporales[`${idKey}-p1-v`] !== undefined ? valoresTemporales[`${idKey}-p1-v`] : (p.p1_v ?? '');
-            const p2_l_val = valoresTemporales[`${idKey}-p2-l`] !== undefined ? valoresTemporales[`${idKey}-p2-l`] : (p.p2_l ?? '');
-            const p2_v_val = valoresTemporales[`${idKey}-p2-v`] !== undefined ? valoresTemporales[`${idKey}-p2-v`] : (p.p2_v ?? '');
-            const p3_l_val = valoresTemporales[`${idKey}-p3-l`] !== undefined ? valoresTemporales[`${idKey}-p3-l`] : (p.p3_l ?? '');
-            const p3_v_val = valoresTemporales[`${idKey}-p3-v`] !== undefined ? valoresTemporales[`${idKey}-p3-v`] : (p.p3_v ?? '');
-            const p4_l_val = valoresTemporales[`${idKey}-p4-l`] !== undefined ? valoresTemporales[`${idKey}-p4-l`] : (p.p4_l ?? '');
-            const p4_v_val = valoresTemporales[`${idKey}-p4-v`] !== undefined ? valoresTemporales[`${idKey}-p4-v`] : (p.p4_v ?? '');
-
             fila.innerHTML = `
                 <td><b class="nombre-lbl">${p.nombre}</b></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p1_l_val}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p1_v_val}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p2_l_val}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p2_v_val}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p3_l_val}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p3_v_val}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p4_l_val}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p4_v_val}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p.p1_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p.p1_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p.p2_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p.p2_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p.p3_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p.p3_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p.p4_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p.p4_v ?? ''}" min="0"></td>
             `;
             cuerpoTabla.appendChild(fila);
         });
-
         document.getElementById('total-participantes').innerText = count;
     }
 
@@ -265,21 +243,13 @@
         if (nombre === "") return alert("Ingresa un nombre.");
         if (actualCount >= 15) return alert("Límite de 15 alcanzado.");
 
-        const nuevoRef = db.ref('participantes').push();
-        nuevoRef.set({
+        db.ref('participantes').push().set({
             nombre: nombre,
-            p1_l: "", p1_v: "",
-            p2_l: "", p2_v: "",
-            p3_l: "", p3_v: "",
-            p4_l: "", p4_v: ""
+            p1_l: "", p1_v: "", p2_l: "", p2_v: "", p3_l: "", p3_v: "", p4_l: "", p4_v: ""
         });
-
         inputNombre.value = "";
     }
 
-    // ==========================================
-    // ACCIONES DE GUARDADO EN BASE DE DATOS
-    // ==========================================
     function guardarPartidosReales() {
         const partidos = {};
         for(let i=1; i<=4; i++) {
@@ -291,8 +261,9 @@
             }
         }
         db.ref('partidos').set(partidos).then(() => {
+            actualizarCabeceras();
             mostrarAviso('p-guardado');
-        });
+        }).catch(err => alert("Error al guardar: " + err.message));
     }
 
     function guardarPredicciones() {
@@ -305,7 +276,6 @@
                 updates[`/participantes/${idKey}/p${i}_v`] = valV !== "" ? parseInt(valV) : "";
             }
         });
-
         db.ref().update(updates).then(() => {
             mostrarAviso('pred-guardado');
         });
@@ -317,9 +287,6 @@
         setTimeout(() => elemento.style.display = "none", 3000);
     }
 
-    // ==========================================
-    // CÁLCULO DE PUNTOS
-    // ==========================================
     function calcularResultados() {
         const reales = [];
         for (let i = 1; i <= 4; i++) {
@@ -331,39 +298,31 @@
 
         const listaMiembros = [];
         Object.keys(datosGlobales.participantes).forEach(idKey => {
-            const fila = document.getElementById(`fila-${idKey}`);
-            if(fila) {
-                const nombre = fila.querySelector('.nombre-lbl').innerText;
-                let puntos = 0;
-                for (let i = 1; i <= 4; i++) {
-                    let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
-                    let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
-                    let r_l = reales[i-1].l;
-                    let r_v = reales[i-1].v;
+            const p = datosGlobales.participantes[idKey];
+            let puntos = 0;
+            for (let i = 1; i <= 4; i++) {
+                let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
+                let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
+                let r_l = reales[i-1].l;
+                let r_v = reales[i-1].v;
 
-                    if (!isNaN(mp_l) && !isNaN(mp_v)) {
-                        if (mp_l === r_l && mp_v === r_v) {
-                            puntos += 3;
-                        } else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) {
-                            puntos += 1;
-                        }
-                    }
+                if (!isNaN(mp_l) && !isNaN(mp_v)) {
+                    if (mp_l === r_l && mp_v === r_v) { puntos += 3; }
+                    else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) { puntos += 1; }
                 }
-                listaMiembros.push({ nombre: nombre, puntos: puntos });
             }
+            listaMiembros.push({ nombre: p.nombre, puntos: puntos });
         });
 
         listaMiembros.sort((a, b) => b.puntos - a.puntos);
-
         const contenedorRanking = document.getElementById('lista-ranking');
         contenedorRanking.innerHTML = "";
         
         listaMiembros.forEach((m, index) => {
             const p = document.createElement('p');
             p.style.fontSize = "18px";
-            if (index === 0 && m.puntos > 0) {
-                p.innerHTML = `🥇 <span class="winner">${m.nombre}</span> - <b>${m.puntos} puntos</b> (¡Líder!)`;
-            } else { p.innerHTML = `👤 ${m.nombre} - <b>${m.puntos} puntos</b>`; }
+            if (index === 0 && m.puntos > 0) { p.innerHTML = `🥇 <span class="winner">${m.nombre}</span> - <b>${m.puntos} puntos</b> (¡Líder!)`; }
+            else { p.innerHTML = `👤 ${m.nombre} - <b>${m.puntos} puntos</b>`; }
             contenedorRanking.appendChild(p);
         });
 
@@ -371,6 +330,5 @@
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 </script>
-
 </body>
 </html>
