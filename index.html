@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiniela de la Copa del Mundo - Base de Datos Realtime</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1250px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #8a1538; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
+        th { background-color: #8a1538; color: white; }
+        input[type="text"], input[type="number"] { width: 70px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        .input-team { width: 130px !important; }
+        .btn-primary { background-color: #8a1538; color: white; border: none; padding: 12px 25px; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        .btn-primary:hover { background-color: #5c0e25; }
+        .btn-secondary { background-color: #27ae60; color: white; border: none; padding: 8px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
+        .btn-secondary:hover { background-color: #1e8449; }
+        .ranking-box { margin-top: 30px; background: #f9f9f9; padding: 15px; border-left: 5px solid #8a1538; border-radius: 4px; }
+        .winner { font-weight: bold; color: #27ae60; }
+        .match-cell { background-color: #fafafa; border-right: 1px dashed #ddd; }
+        .admin-panel { background: #fdf2f4; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5d6dd; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .contador { font-weight: bold; color: #8a1538; }
+        .flag-spacing { font-size: 1.2rem; vertical-align: middle; margin: 0 4px; }
+        .guardado-txt { color: #27ae60; font-size: 0.9rem; font-weight: bold; display: none; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏆 Quiniela Mundialista en la Nube 🏆</h1>
+    <p style="text-align: center;">Los resultados y participantes se guardan automáticamente en tiempo real.</p>
+    
+    <hr>
+
+    <h2>1. Configuración de Partidos y Resultado Real</h2>
+    <table id="tabla-partidos">
+        <thead>
+            <tr>
+                <th>Partido</th>
+                <th>Equipo Local</th>
+                <th>Goles L</th>
+                <th>vs</th>
+                <th>Goles V</th>
+                <th>Equipo Visitante</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>#1</b></td>
+                <td><input type="text" class="input-team" id="p1-el" value="Argentina" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p1-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><b>VS</b></td>
+                <td><input type="number" id="p1-gv" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p1-ev" value="Francia" oninput="cambioDetectado()"></td>
+            </tr>
+            <tr>
+                <td><b>#2</b></td>
+                <td><input type="text" class="input-team" id="p2-el" value="Brasil" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p2-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><b>VS</b></td>
+                <td><input type="number" id="p2-gv" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p2-ev" value="Alemania" oninput="cambioDetectado()"></td>
+            </tr>
+            <tr>
+                <td><b>#3</b></td>
+                <td><input type="text" class="input-team" id="p3-el" value="España" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p3-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><b>VS</b></td>
+                <td><input type="number" id="p3-gv" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p3-ev" value="Inglaterra" oninput="cambioDetectado()"></td>
+            </tr>
+            <tr>
+                <td><b>#4</b></td>
+                <td><input type="text" class="input-team" id="p4-el" value="México" oninput="cambioDetectado()"></td>
+                <td><input type="number" id="p4-gl" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><b>VS</b></td>
+                <td><input type="number" id="p4-gv" value="0" min="0" oninput="cambioDetectado()"></td>
+                <td><input type="text" class="input-team" id="p4-ev" value="Japón" oninput="cambioDetectado()"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="text-align: right; margin-top: 5px;">
+        <button class="btn-secondary" onclick="guardarPartidos Reales()">💾 Guardar Partidos Reales</button>
+        <span id="p-guardado" class="guardado-txt">¡Partidos Guardados!</span>
+    </div>
+
+    <hr style="margin-top: 30px;">
+
+    <h2>2. Predicciones de los Miembros</h2>
+    
+    <div class="admin-panel">
+        <div>
+            <label for="nuevo-miembro"><b>Nuevo Participante:</b> </label>
+            <input type="text" id="nuevo-miembro" placeholder="Nombre del amigo" style="width: 180px; text-align: left;">
+            <button class="btn-secondary" onclick="agregarParticipante()">➕ Agregar</button>
+        </div>
+        <div class="contador">
+            Participantes: <span id="total-participantes">0</span> / 15
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table id="tabla-quiniela">
+            <thead>
+                <tr>
+                    <th>Participante</th>
+                    <th id="header-p1">Argentina vs Francia</th>
+                    <th id="header-p2">Brasil vs Alemania</th>
+                    <th id="header-p3">España vs Inglaterra</th>
+                    <th id="header-p4">México vs Japón</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-quiniela">
+                </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 15px; gap: 10px; display: flex; justify-content: center;">
+        <button class="btn-secondary" style="background-color: #2980b9;" onclick="guardarPredicciones()">💾 Guardar Mis Predicciones</button>
+        <button class="btn-primary" style="margin-top:0;" onclick="calcularResultados()">📊 Calcular Ganador y Puntos</button>
+    </div>
+    <div style="text-align: center; margin-top: 5px;">
+        <span id="pred-guardado" class="guardado-txt">¡Predicciones de todos guardadas en la base de datos!</span>
+    </div>
+
+    <div class="ranking-box" id="seccion-resultados" style="display: none;">
+        <h2>🏆 Tabla de Posiciones </h2>
+        <div id="lista-ranking"></div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // TUNEL DE CONEXIÓN CON TU BASE DE DATOS FIREBASE
+    // REEMPLAZA ESTO CON TUS DATOS DE CONFIGURACIÓN
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyCvWb4CB-Aq0jpEtIsdHIhi4lmAdukRrbg",
+        authDomain: "quiniela-mundialista-88011.firebaseapp.com",
+        databaseURL: "https://quiniela-mundialista-88011-default-rtdb.firebaseio.com",
+        projectId: "quiniela-mundialista-88011",
+        storageBucket: "quiniela-mundialista-88011.firebasestorage.app",
+        messagingSenderId: "990070056201",
+        appId: "1:990070056201:web:6c6d06b78bb737c26e1fd8",
+        measurementId: "G-BRVLVYT95W"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let datosGlobales = { participantes: {}, partidos: {} };
+
+    const diccionarioBanderas = {
+        "argentina": "🇦🇷", "francia": "🇫🇷", "brasil": "🇧🇷", "alemania": "🇩🇪",
+        "españa": "🇪🇸", "espana": "🇪🇸", "inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "mexico": "🇲🇽", 
+        "méxico": "🇲🇽", "japon": "🇯🇵", "japón": "🇯🇵", "portugal": "🇵🇹", 
+        "italia": "🇮🇹", "uruguay": "🇺🇾", "estados unidos": "🇺🇸", "usa": "🇺🇸",
+        "canada": "🇨🇦", "canadá": "🇨🇦", "paises bajos": "🇳🇱", "holanda": "🇳🇱",
+        "croacia": "🇭🇷", "marruecos": "🇲🇦"
+    };
+
+    function obtenerBandera(nombrePais) {
+        if(!nombrePais) return "🏳️";
+        const clave = nombrePais.trim().toLowerCase();
+        return diccionarioBanderas[clave] || "🏳️";
+    }
+
+    function actualizarCabeceras() {
+        for (let i = 1; i <= 4; i++) {
+            const el = document.getElementById(`p${i}-el`).value || `Local ${i}`;
+            const ev = document.getElementById(`p${i}-ev`).value || `Visitante ${i}`;
+            const header = document.getElementById(`header-p${i}`);
+            if(header) header.innerHTML = `<span class="flag-spacing">${obtenerBandera(el)}</span> ${el} vs ${ev} <span class="flag-spacing">${obtenerBandera(ev)}</span>`;
+        }
+    }
+
+    function cambioDetectado() {
+        actualizarCabeceras();
+    }
+
+    // ==========================================
+    // LEER DATOS AUTOMÁTICAMENTE AL ENTRAR AL LINK
+    // ==========================================
+    db.ref('/').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            if (data.partidos) {
+                // Cargar partidos guardados
+                for(let i=1; i<=4; i++) {
+                    if(data.partidos[`p${i}`]) {
+                        document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el;
+                        document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl;
+                        document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv;
+                        document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev;
+                    }
+                }
+            }
+            
+            if (data.participantes) {
+                datosGlobales.participantes = data.participantes;
+                reconstruirTablaParticipantes(data.participantes);
+            }
+            actualizarCabeceras();
+        }
+    });
+
+    function reconstruirTablaParticipantes(participantes) {
+        const cuerpoTabla = document.getElementById('cuerpo-quiniela');
+        cuerpoTabla.innerHTML = "";
+        let count = 0;
+
+        Object.keys(participantes).forEach(idKey => {
+            count++;
+            const p = participantes[idKey];
+            const fila = document.createElement('tr');
+            fila.id = `fila-${idKey}`;
+            fila.innerHTML = `
+                <td><b class="nombre-lbl">${p.nombre}</b></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p.p1_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p.p1_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p.p2_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p.p2_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p.p3_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p.p3_v ?? ''}" min="0"></td>
+                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p.p4_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p.p4_v ?? ''}" min="0"></td>
+            `;
+            cuerpoTabla.appendChild(fila);
+        });
+
+        document.getElementById('total-participantes').innerText = count;
+    }
+
+    function agregarParticipante() {
+        const inputNombre = document.getElementById('nuevo-miembro');
+        const nombre = inputNombre.value.trim();
+        const actualCount = Object.keys(datosGlobales.participantes).length;
+
+        if (nombre === "") return alert("Ingresa un nombre.");
+        if (actualCount >= 15) return alert("Límite de 15 alcanzado.");
+
+        // Crear una clave única en Firebase para ese participante
+        const nuevoRef = db.ref('participantes').push();
+        nuevoRef.set({
+            nombre: nombre,
+            p1_l: "", p1_v: "",
+            p2_l: "", p2_v: "",
+            p3_l: "", p3_v: "",
+            p4_l: "", p4_v: ""
+        });
+
+        inputNombre.value = "";
+    }
+
+    // ==========================================
+    // ESCRIBIR / GUARDAR EN LA BASE DE DATOS
+    // ==========================================
+    function guardarPartidosReales() {
+        const partidos = {};
+        for(let i=1; i<=4; i++) {
+            partidos[`p${i}`] = {
+                el: document.getElementById(`p${i}-el`).value,
+                gl: parseInt(document.getElementById(`p${i}-gl`).value) || 0,
+                gv: parseInt(document.getElementById(`p${i}-gv`).value) || 0,
+                ev: document.getElementById(`p${i}-ev`).value
+            }
+        }
+        db.ref('partidos').set(partidos).then(() => {
+            mostrarAviso('p-guardado');
+        });
+    }
+
+    function guardarPredicciones() {
+        const updates = {};
+        Object.keys(datosGlobales.participantes).forEach(idKey => {
+            updates[`/participantes/${idKey}/p1_l`] = document.getElementById(`${idKey}-p1-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p1-l`).value) : "";
+            updates[`/participantes/${idKey}/p1_v`] = document.getElementById(`${idKey}-p1-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p1-v`).value) : "";
+            updates[`/participantes/${idKey}/p2_l`] = document.getElementById(`${idKey}-p2-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p2-l`).value) : "";
+            updates[`/participantes/${idKey}/p2_v`] = document.getElementById(`${idKey}-p2-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p2-v`).value) : "";
+            updates[`/participantes/${idKey}/p3_l`] = document.getElementById(`${idKey}-p3-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p3-l`).value) : "";
+            updates[`/participantes/${idKey}/p3_v`] = document.getElementById(`${idKey}-p3-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p3-v`).value) : "";
+            updates[`/participantes/${idKey}/p4_l`] = document.getElementById(`${idKey}-p4-l`).value !== "" ? parseInt(document.getElementById(`${idKey}-p4-l`).value) : "";
+            updates[`/participantes/${idKey}/p4_v`] = document.getElementById(`${idKey}-p4-v`).value !== "" ? parseInt(document.getElementById(`${idKey}-p4-v`).value) : "";
+        });
+
+        db.ref().update(updates).then(() => {
+            mostrarAviso('pred-guardado');
+        });
+    }
+
+    function mostrarAviso(id) {
+        const elemento = document.getElementById(id);
+        elemento.style.display = "inline";
+        setTimeout(() => elemento.style.display = "none", 3000);
+    }
+
+    // ==========================================
+    // SISTEMA DE CALCULO DE PUNTOS
+    // ==========================================
+    function calcularResultados() {
+        const reales = [];
+        for (let i = 1; i <= 4; i++) {
+            reales.push({
+                l: parseInt(document.getElementById(`p${i}-gl`).value) || 0,
+                v: parseInt(document.getElementById(`p${i}-gv`).value) || 0
+            });
+        }
+
+        const listaMiembros = [];
+        Object.keys(datosGlobales.participantes).forEach(idKey => {
+            const fila = document.getElementById(`fila-${idKey}`);
+            const nombre = fila.querySelector('.nombre-lbl').innerText;
+            
+            let puntos = 0;
+            for (let i = 1; i <= 4; i++) {
+                let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
+                let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
+                let r_l = reales[i-1].l;
+                let r_v = reales[i-1].v;
+
+                if (!isNaN(mp_l) && !isNaN(mp_v)) {
+                    if (mp_l === r_l && mp_v === r_v) {
+                        puntos += 3; // Marcador exacto
+                    } else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) {
+                        puntos += 1; // Tendencia exacta
+                    }
+                }
+            }
+            listaMiembros.push({ nombre: nombre, puntos: puntos });
+        });
+
+        listaMiembros.sort((a, b) => b.puntos - a.puntos);
+
+        const contenedorRanking = document.getElementById('lista-ranking');
+        contenedorRanking.innerHTML = "";
+        
+        listaMiembros.forEach((m, index) => {
+            const p = document.createElement('p');
+            p.style.fontSize = "18px";
+            if (index === 0 && m.puntos > 0) {
+                p.innerHTML = `🥇 <span class="winner">${m.nombre}</span> - <b>${m.puntos} puntos</b> (¡Líder!)`;
+            } else { p.innerHTML = `👤 ${m.nombre} - <b>${m.puntos} puntos</b>`; }
+            contenedorRanking.appendChild(p);
+        });
+
+        document.getElementById('seccion-resultados').style.display = "block";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
