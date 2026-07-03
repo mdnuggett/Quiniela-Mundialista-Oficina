@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela de la Copa del Mundo - Base de Datos Realtime</title>
+    <title>Quiniela Mundialista Dinámica - Torneo Acumulativo</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1250px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 1300px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1, h2 { text-align: center; color: #8a1538; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
@@ -17,6 +17,8 @@
         .btn-primary:hover { background-color: #5c0e25; }
         .btn-secondary { background-color: #27ae60; color: white; border: none; padding: 8px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
         .btn-secondary:hover { background-color: #1e8449; }
+        .btn-danger { background-color: #c0392b; color: white; border: none; padding: 6px 10px; font-size: 12px; border-radius: 4px; cursor: pointer; }
+        .btn-danger:hover { background-color: #962d22; }
         .ranking-box { margin-top: 30px; background: #f9f9f9; padding: 15px; border-left: 5px solid #8a1538; border-radius: 4px; }
         .winner { font-weight: bold; color: #27ae60; }
         .match-cell { background-color: #fafafa; border-right: 1px dashed #ddd; }
@@ -24,6 +26,7 @@
         .contador { font-weight: bold; color: #8a1538; }
         .flag-spacing { font-size: 1.2rem; vertical-align: middle; margin: 0 4px; }
         .guardado-txt { color: #27ae60; font-size: 0.9rem; font-weight: bold; display: none; margin-left: 10px; }
+        .admin-zone { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; }
     </style>
 
     <!-- IMPORTAR FIREBASE -->
@@ -33,13 +36,17 @@
 <body>
 
 <div class="container">
-    <h1>🏆 Quiniela Mundialista en la Nube 🏆</h1>
-    <p style="text-align: center;">Los resultados y participantes se guardan automáticamente en tiempo real.</p>
+    <h1>🏆 Quiniela Mundialista Dinámica 🏆</h1>
+    <p style="text-align: center;">Configura cualquier número de partidos por jornada. ¡Puntos acumulativos!</p>
     
     <hr>
 
     <!-- CONFIGURACIÓN DE PARTIDOS -->
     <h2>1. Configuración de Partidos y Resultado Real</h2>
+    <div style="margin-bottom: 10px;">
+        <button class="btn-secondary" style="background-color: #2980b9;" onclick="agregarFilaPartido()">➕ Añadir Partido</button>
+    </div>
+    
     <table id="tabla-partidos">
         <thead>
             <tr>
@@ -49,43 +56,14 @@
                 <th>vs</th>
                 <th>Goles V</th>
                 <th>Equipo Visitante</th>
+                <th>Acción</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td><b>#1</b></td>
-                <td><input type="text" class="input-team" id="p1-el" placeholder="Local 1"></td>
-                <td><input type="number" id="p1-gl" value="0" min="0"></td>
-                <td><b>VS</b></td>
-                <td><input type="number" id="p1-gv" value="0" min="0"></td>
-                <td><input type="text" class="input-team" id="p1-ev" placeholder="Visitante 1"></td>
-            </tr>
-            <tr>
-                <td><b>#2</b></td>
-                <td><input type="text" class="input-team" id="p2-el" placeholder="Local 2"></td>
-                <td><input type="number" id="p2-gl" value="0" min="0"></td>
-                <td><b>VS</b></td>
-                <td><input type="number" id="p2-gv" value="0" min="0"></td>
-                <td><input type="text" class="input-team" id="p2-ev" placeholder="Visitante 2"></td>
-            </tr>
-            <tr>
-                <td><b>#3</b></td>
-                <td><input type="text" class="input-team" id="p3-el" placeholder="Local 3"></td>
-                <td><input type="number" id="p3-gl" value="0" min="0"></td>
-                <td><b>VS</b></td>
-                <td><input type="number" id="p3-gv" value="0" min="0"></td>
-                <td><input type="text" class="input-team" id="p3-ev" placeholder="Visitante 3"></td>
-            </tr>
-            <tr>
-                <td><b>#4</b></td>
-                <td><input type="text" class="input-team" id="p4-el" placeholder="Local 4"></td>
-                <td><input type="number" id="p4-gl" value="0" min="0"></td>
-                <td><b>VS</b></td>
-                <td><input type="number" id="p4-gv" value="0" min="0"></td>
-                <td><input type="text" class="input-team" id="p4-ev" placeholder="Visitante 4"></td>
-            </tr>
+        <tbody id="cuerpo-partidos">
+            <!-- Se generan dinámicamente -->
         </tbody>
     </table>
+    
     <div style="text-align: right; margin-top: 10px; display: flex; justify-content: flex-end; align-items: center;">
         <button class="btn-secondary" onclick="guardarPartidosReales()">💾 Guardar Partidos Reales</button>
         <span id="p-guardado" class="guardado-txt">¡Partidos Guardados!</span>
@@ -109,14 +87,8 @@
 
     <div style="overflow-x: auto;">
         <table id="tabla-quiniela">
-            <thead>
-                <tr>
-                    <th>Participante</th>
-                    <th id="header-p1">Partido 1</th>
-                    <th id="header-p2">Partido 2</th>
-                    <th id="header-p3">Partido 3</th>
-                    <th id="header-p4">Partido 4</th>
-                </tr>
+            <thead id="cabecera-quiniela">
+                <!-- Dinámico basado en el número de partidos -->
             </thead>
             <tbody id="cuerpo-quiniela">
                 <!-- Dinámico -->
@@ -126,7 +98,7 @@
 
     <div style="text-align: center; margin-top: 15px; gap: 10px; display: flex; justify-content: center; align-items: center;">
         <button class="btn-secondary" style="background-color: #2980b9;" onclick="guardarPredicciones()">💾 Guardar Mis Predicciones</button>
-        <button class="btn-primary" style="margin-top:0;" onclick="calcularResultados()">📊 Calcular Ganador y Puntos</button>
+        <button class="btn-primary" style="margin-top:0;" onclick="calcularResultados()">📊 Ver Tabla General Provisional</button>
     </div>
     <div style="text-align: center; margin-top: 5px;">
         <span id="pred-guardado" class="guardado-txt">¡Predicciones guardadas en la base de datos!</span>
@@ -134,30 +106,38 @@
 
     <!-- RESULTADOS Y RANKING -->
     <div class="ranking-box" id="seccion-resultados" style="display: none;">
-        <h2>🏆 Tabla de Posiciones </h2>
+        <h2>🏆 Tabla de Posiciones General</h2>
         <div id="lista-ranking"></div>
+    </div>
+
+    <!-- ZONA DEL ADMINISTRADOR PARA PASAR DE JORNADA -->
+    <div class="admin-zone">
+        <h3>🛠️ Panel de Control del Administrador</h3>
+        <p>Usa este botón <b>solo cuando terminen todos los partidos configurados hoy</b>. Sumará los puntos actuales al historial y reiniciará la tabla.</p>
+        <button class="btn-primary" style="background-color: #d35400;" onclick="cerrarYAcumularJornada()">🔒 Guardar y Sumar Puntos a la General</button>
     </div>
 </div>
 
 <script>
     // ==========================================
-    // CONFIGURACIÓN DE FIREBASE
+    // CONFIGURACIÓN DE FIREBASE (Pon tus claves aquí)
     // ==========================================
     const firebaseConfig = {
-        apiKey: "AIzaSyCvWb4CB-Aq0jpEtIsdHIhi4lmAdukRrbg",
+         apiKey: "AIzaSyCvWb4CB-Aq0jpEtIsdHIhi4lmAdukRrbg",
   	authDomain: "quiniela-mundialista-88011.firebaseapp.com",
   	databaseURL: "https://quiniela-mundialista-88011-default-rtdb.firebaseio.com",
   	projectId: "quiniela-mundialista-88011",
   	storageBucket: "quiniela-mundialista-88011.firebasestorage.app",
   	messagingSenderId: "990070056201",
   	appId: "1:990070056201:web:6c6d06b78bb737c26e1fd8",
- 	measurementId: "G-BRVLVYT95W"
+  	measurementId: "G-BRVLVYT95W"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let datosGlobales = { participantes: {}, partidos: {} };
+    let listaPartidosKeys = []; // Mantiene el orden y ID de los partidos activos
 
     const diccionarioBanderas = {
         "argentina": "🇦🇷", "francia": "🇫🇷", "brasil": "🇧🇷", "alemania": "🇩🇪",
@@ -172,38 +152,93 @@
         return diccionarioBanderas[clave] || "🏳️";
     }
 
-    function actualizarCabeceras() {
-        for (let i = 1; i <= 4; i++) {
-            const el = document.getElementById(`p${i}-el`).value || `Local ${i}`;
-            const ev = document.getElementById(`p${i}-ev`).value || `Visitante ${i}`;
-            const header = document.getElementById(`header-p${i}`);
-            if(header) header.innerHTML = `<span class="flag-spacing">${obtenerBandera(el)}</span> ${el} vs ${ev} <span class="flag-spacing">${obtenerBandera(ev)}</span>`;
-        }
+    // GENERAR FILA DE PARTIDO EN PANTALLA
+    function crearFilaPartidoEnHTML(idPart, datos) {
+        const cuerpo = document.getElementById('cuerpo-partidos');
+        const fila = document.createElement('tr');
+        fila.id = `fila-partido-${idPart}`;
+        
+        fila.innerHTML = `
+            <td><b class="num-partido-lbl">Partido</b></td>
+            <td><input type="text" class="input-team" id="${idPart}-el" value="${datos.el || ''}" placeholder="Local" oninput="renderizarCabecerasQuiniela()"></td>
+            <td><input type="number" id="${idPart}-gl" value="${datos.gl ?? 0}" min="0"></td>
+            <td><b>VS</b></td>
+            <td><input type="number" id="${idPart}-gv" value="${datos.gv ?? 0}" min="0"></td>
+            <td><input type="text" class="input-team" id="${idPart}-ev" value="${datos.ev || ''}" placeholder="Visitante" oninput="renderizarCabecerasQuiniela()"></td>
+            <td><button class="btn-danger" onclick="eliminarFilaPartido('${idPart}')">🗑️</button></td>
+        `;
+        cuerpo.appendChild(fila);
     }
 
-    // LEER DATOS UNA SOLA VEZ AL CARGAR (Evita bucles de borrado mientras escribes)
+    function agregarFilaPartido() {
+        // Genera un ID único temporal basado en el tiempo
+        const nuevoId = 'part_' + Date.now();
+        listaPartidosKeys.push(nuevoId);
+        crearFilaPartidoEnHTML(nuevoId, {});
+        enumerarPartidos();
+        renderizarCabecerasQuiniela();
+        reconstruirTablaParticipantes(datosGlobales.participantes);
+    }
+
+    function eliminarFilaPartido(idPart) {
+        const fila = document.getElementById(`fila-partido-${idPart}`);
+        if(fila) fila.remove();
+        listaPartidosKeys = listaPartidosKeys.filter(k => k !== idPart);
+        enumerarPartidos();
+        renderizarCabecerasQuiniela();
+        reconstruirTablaParticipantes(datosGlobales.participantes);
+    }
+
+    function enumerarPartidos() {
+        const filas = document.querySelectorAll('#cuerpo-partidos tr');
+        filas.forEach((fila, index) => {
+            fila.querySelector('.num-partido-lbl').innerText = `#${index + 1}`;
+        });
+    }
+
+    function renderizarCabecerasQuiniela() {
+        const cabecera = document.getElementById('cabecera-quiniela');
+        let html = `<tr><th>Participante</th>`;
+        
+        listaPartidosKeys.forEach((idPart, index) => {
+            const el = document.getElementById(`${idPart}-el`)?.value || `Local ${index+1}`;
+            const ev = document.getElementById(`${idPart}-ev`)?.value || `Visitante ${index+1}`;
+            html += `<th><span class="flag-spacing">${obtenerBandera(el)}</span> ${el} vs ${ev} <span class="flag-spacing">${obtenerBandera(ev)}</span></th>`;
+        });
+        
+        html += `</tr>`;
+        cabecera.innerHTML = html;
+    }
+
+    // CARGAR DATA UNA VEZ AL INICIAR
     db.ref('/').once('value').then((snapshot) => {
         const data = snapshot.val();
         if (data) {
+            // Cargar Partidos Dinámicos
+            document.getElementById('cuerpo-partidos').innerHTML = "";
+            listaPartidosKeys = [];
             if (data.partidos) {
-                for(let i=1; i<=4; i++) {
-                    if(data.partidos[`p${i}`]) {
-                        document.getElementById(`p${i}-el`).value = data.partidos[`p${i}`].el || "";
-                        document.getElementById(`p${i}-gl`).value = data.partidos[`p${i}`].gl ?? 0;
-                        document.getElementById(`p${i}-gv`).value = data.partidos[`p${i}`].gv ?? 0;
-                        document.getElementById(`p${i}-ev`).value = data.partidos[`p${i}`].ev || "";
-                    }
-                }
+                datosGlobales.partidos = data.partidos;
+                Object.keys(data.partidos).forEach(idPart => {
+                    listaPartidosKeys.push(idPart);
+                    crearFilaPartidoEnHTML(idPart, data.partidos[idPart]);
+                });
+                enumerarPartidos();
+            } else {
+                // Si está vacío del todo, crea 1 por defecto para empezar
+                agregarFilaPartido();
             }
+            
+            // Cargar Participantes
             if (data.participantes) {
                 datosGlobales.participantes = data.participantes;
                 reconstruirTablaParticipantes(data.participantes);
             }
-            actualizarCabeceras();
+            renderizarCabecerasQuiniela();
         }
     });
 
-    // Escuchar cambios en los participantes dinámicamente
+    // Escuchar cambios de los participantes en tiempo real (cuando se añaden nombres)
     db.ref('participantes').on('value', (snapshot) => {
         const data = snapshot.val();
         if(data) {
@@ -214,6 +249,18 @@
 
     function reconstruirTablaParticipantes(participantes) {
         const cuerpoTabla = document.getElementById('cuerpo-quiniela');
+        
+        // Guardar valores que los usuarios estén escribiendo en este momento
+        const tempVals = {};
+        Object.keys(participantes).forEach(idKey => {
+            listaPartidosKeys.forEach(idPart => {
+                const inl = document.getElementById(`${idKey}-${idPart}-l`);
+                const inv = document.getElementById(`${idKey}-${idPart}-v`);
+                if(inl) tempVals[`${idKey}-${idPart}-l`] = inl.value;
+                if(inv) tempVals[`${idKey}-${idPart}-v`] = inv.value;
+            });
+        });
+
         cuerpoTabla.innerHTML = "";
         let count = 0;
 
@@ -223,12 +270,21 @@
             const fila = document.createElement('tr');
             fila.id = `fila-${idKey}`;
             
+            let celdasPartidos = "";
+            listaPartidosKeys.forEach(idPart => {
+                // Si hay valor temporal en pantalla lo usa, si no, busca en base de datos el nodo correspondiente
+                const bdValL = (p.predicciones && p.predicciones[idPart]) ? p.predicciones[idPart].l : '';
+                const bdValV = (p.predicciones && p.predicciones[idPart]) ? p.predicciones[idPart].v : '';
+                
+                const valL = tempVals[`${idKey}-${idPart}-l`] !== undefined ? tempVals[`${idKey}-${idPart}-l`] : bdValL;
+                const valV = tempVals[`${idKey}-${idPart}-v`] !== undefined ? tempVals[`${idKey}-${idPart}-v`] : bdValV;
+
+                celdasPartidos += `<td class="match-cell"><input type="number" id="${idKey}-${idPart}-l" value="${valL}" min="0"> - <input type="number" id="${idKey}-${idPart}-v" value="${valV}" min="0"></td>`;
+            });
+            
             fila.innerHTML = `
-                <td><b class="nombre-lbl">${p.nombre}</b></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p1-l" value="${p.p1_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p1-v" value="${p.p1_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p2-l" value="${p.p2_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p2-v" value="${p.p2_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p3-l" value="${p.p3_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p3-v" value="${p.p3_v ?? ''}" min="0"></td>
-                <td class="match-cell"><input type="number" id="${idKey}-p4-l" value="${p.p4_l ?? ''}" min="0"> - <input type="number" id="${idKey}-p4-v" value="${p.p4_v ?? ''}" min="0"></td>
+                <td><b class="nombre-lbl">${p.nombre}</b> <br><small style="color:#7f8c8d;">Previo: ${p.puntos_acumulados ?? 0} pts</small></td>
+                ${celdasPartidos}
             `;
             cuerpoTabla.appendChild(fila);
         });
@@ -244,41 +300,48 @@
         if (actualCount >= 15) return alert("Límite de 15 alcanzado.");
 
         db.ref('participantes').push().set({
-            nombre: nombre,
-            p1_l: "", p1_v: "", p2_l: "", p2_v: "", p3_l: "", p3_v: "", p4_l: "", p4_v: ""
+            nombre: nombre, 
+            puntos_acumulados: 0,
+            predicciones: {}
         });
         inputNombre.value = "";
     }
 
+    // GUARDAR LA ESTRUCTURA DINÁMICA DE PARTIDOS
     function guardarPartidosReales() {
         const partidos = {};
-        for(let i=1; i<=4; i++) {
-            partidos[`p${i}`] = {
-                el: document.getElementById(`p${i}-el`).value,
-                gl: parseInt(document.getElementById(`p${i}-gl`).value) || 0,
-                gv: parseInt(document.getElementById(`p${i}-gv`).value) || 0,
-                ev: document.getElementById(`p${i}-ev`).value
+        listaPartidosKeys.forEach(idPart => {
+            partidos[idPart] = {
+                el: document.getElementById(`${idPart}-el`).value,
+                gl: parseInt(document.getElementById(`${idPart}-gl`).value) || 0,
+                gv: parseInt(document.getElementById(`${idPart}-gv`).value) || 0,
+                ev: document.getElementById(`${idPart}-ev`).value
             }
-        }
+        });
+        
         db.ref('partidos').set(partidos).then(() => {
-            actualizarCabeceras();
+            datosGlobales.partidos = partidos;
+            renderizarCabecerasQuiniela();
             mostrarAviso('p-guardado');
-        }).catch(err => alert("Error al guardar: " + err.message));
+        }).catch(err => alert("Error: " + err.message));
     }
 
+    // GUARDAR LAS PREDICCIONES ADAPTABLES
     function guardarPredicciones() {
         const updates = {};
         Object.keys(datosGlobales.participantes).forEach(idKey => {
-            for(let i=1; i<=4; i++) {
-                const valL = document.getElementById(`${idKey}-p${i}-l`).value;
-                const valV = document.getElementById(`${idKey}-p${i}-v`).value;
-                updates[`/participantes/${idKey}/p${i}_l`] = valL !== "" ? parseInt(valL) : "";
-                updates[`/participantes/${idKey}/p${i}_v`] = valV !== "" ? parseInt(valV) : "";
-            }
+            listaPartidosKeys.forEach(idPart => {
+                const valL = document.getElementById(`${idKey}-${idPart}-l`).value;
+                const valV = document.getElementById(`${idKey}-${idPart}-v`).value;
+                
+                updates[`/participantes/${idKey}/predicciones/${idPart}/l`] = valL !== "" ? parseInt(valL) : "";
+                updates[`/participantes/${idKey}/predicciones/${idPart}/v`] = valV !== "" ? parseInt(valV) : "";
+            });
         });
+        
         db.ref().update(updates).then(() => {
             mostrarAviso('pred-guardado');
-        });
+        }).catch(err => alert("Error al guardar: " + err.message));
     }
 
     function mostrarAviso(id) {
@@ -287,47 +350,95 @@
         setTimeout(() => elemento.style.display = "none", 3000);
     }
 
-    function calcularResultados() {
-        const reales = [];
-        for (let i = 1; i <= 4; i++) {
-            reales.push({
-                l: parseInt(document.getElementById(`p${i}-gl`).value) || 0,
-                v: parseInt(document.getElementById(`p${i}-gv`).value) || 0
-            });
-        }
-
-        const listaMiembros = [];
+    // CALCULAR CON NUEVA ESTRUCTURA DINÁMICA
+    function obtenerPuntosJornada() {
+        const puntosCalculados = {};
+        
         Object.keys(datosGlobales.participantes).forEach(idKey => {
-            const p = datosGlobales.participantes[idKey];
-            let puntos = 0;
-            for (let i = 1; i <= 4; i++) {
-                let mp_l = parseInt(document.getElementById(`${idKey}-p${i}-l`).value);
-                let mp_v = parseInt(document.getElementById(`${idKey}-p${i}-v`).value);
-                let r_l = reales[i-1].l;
-                let r_v = reales[i-1].v;
+            let ptsHoy = 0;
+            
+            listaPartidosKeys.forEach(idPart => {
+                const r = datosGlobales.partidos[idPart] || { gl: 0, gv: 0 };
+                let mp_l = parseInt(document.getElementById(`${idKey}-${idPart}-l`).value);
+                let mp_v = parseInt(document.getElementById(`${idKey}-${idPart}-v`).value);
+                let r_l = r.gl || 0;
+                let r_v = r.gv || 0;
 
                 if (!isNaN(mp_l) && !isNaN(mp_v)) {
-                    if (mp_l === r_l && mp_v === r_v) { puntos += 3; }
-                    else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) { puntos += 1; }
+                    if (mp_l === r_l && mp_v === r_v) { ptsHoy += 3; }
+                    else if ((mp_l > mp_v && r_l > r_v) || (mp_l < mp_v && r_l < r_v) || (mp_l === mp_v && r_l === r_v)) { ptsHoy += 1; }
                 }
-            }
-            listaMiembros.push({ nombre: p.nombre, puntos: puntos });
+            });
+            puntosCalculados[idKey] = ptsHoy;
+        });
+        return puntosCalculados;
+    }
+
+    function calcularResultados() {
+        const ptsHoy = obtenerPuntosJornada();
+        const listaMiembros = [];
+
+        Object.keys(datosGlobales.participantes).forEach(idKey => {
+            const p = datosGlobales.participantes[idKey];
+            const basePts = p.puntos_acumulados || 0;
+            const jornadaPts = ptsHoy[idKey] || 0;
+            
+            listaMiembros.push({
+                nombre: p.nombre,
+                total: basePts + jornadaPts,
+                acumulado: basePts,
+                hoy: jornadaPts
+            });
         });
 
-        listaMiembros.sort((a, b) => b.puntos - a.puntos);
+        listaMiembros.sort((a, b) => b.total - a.total);
         const contenedorRanking = document.getElementById('lista-ranking');
         contenedorRanking.innerHTML = "";
         
         listaMiembros.forEach((m, index) => {
             const p = document.createElement('p');
             p.style.fontSize = "18px";
-            if (index === 0 && m.puntos > 0) { p.innerHTML = `🥇 <span class="winner">${m.nombre}</span> - <b>${m.puntos} puntos</b> (¡Líder!)`; }
-            else { p.innerHTML = `👤 ${m.nombre} - <b>${m.puntos} puntos</b>`; }
+            if (index === 0 && m.total > 0) {
+                p.innerHTML = `🥇 <span class="winner">${m.nombre}</span> - <b>${m.total} puntos totales</b> <br><small style="margin-left:25px; color:#555;">(Lleva ${m.acumulado} acumulados + ${m.hoy} ganados hoy)</small>`;
+            } else {
+                p.innerHTML = `👤 ${m.nombre} - <b>${m.total} puntos totales</b> <br><small style="margin-left:25px; color:#555;">(${m.acumulado} acumulados + ${m.hoy} ganados hoy)</small>`;
+            }
             contenedorRanking.appendChild(p);
         });
 
         document.getElementById('seccion-resultados').style.display = "block";
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // PASAR JORNADA Y REINICIAR CELDAS
+    function cerrarYAcumularJornada() {
+        if (!confirm("⚠️ ¿Deseas cerrar la jornada? Se sumarán los puntos y se limpiarán los pronósticos. Los partidos configurados se mantendrán para que solo edites sus nombres.")) {
+            return;
+        }
+
+        const ptsHoy = obtenerPuntosJornada();
+        const updates = {};
+
+        Object.keys(datosGlobales.participantes).forEach(idKey => {
+            const p = datosGlobales.participantes[idKey];
+            const basePts = p.puntos_acumulados || 0;
+            const jornadaPts = ptsHoy[idKey] || 0;
+            
+            updates[`/participantes/${idKey}/puntos_acumulados`] = basePts + jornadaPts;
+            
+            // Limpiar el nodo de predicciones
+            listaPartidosKeys.forEach(idPart => {
+                updates[`/participantes/${idKey}/predicciones/${idPart}/l`] = "";
+                updates[`/participantes/${idKey}/predicciones/${idPart}/v`] = "";
+            });
+        });
+
+        db.ref().update(updates).then(() => {
+            alert("✅ ¡Jornada cerrada! Puntos guardados en el historial acumulado.");
+            document.getElementById('seccion-resultados').style.display = "none";
+            // Forzar actualización visual limpia
+            reconstruirTablaParticipantes(datosGlobales.participantes);
+        }).catch(err => alert("Error al cerrar: " + err.message));
     }
 </script>
 </body>
